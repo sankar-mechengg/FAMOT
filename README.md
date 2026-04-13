@@ -425,7 +425,7 @@ FAMOT is device-agnostic by design. To integrate a new input device:
 
 ### Lab Websites
 
-- [B. Sankar — IISc](https://sankar-mechengg.github.io/home)
+- [B. Sankar — IISc](https://sankar.studio/)
 - [RISE Lab — IIT Delhi](https://sites.google.com/view/riselabiitd/)
 
 ---
