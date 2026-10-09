@@ -149,3 +149,7 @@ ignore.conf
 # FAMOT recorded data (created at runtime)
 /[Aa]ssets/StreamingAssets/FAMOT_Data/
 /[Aa]ssets/StreamingAssets/FAMOT_Data.meta
+
+# Generated solution files
+*.slnx
+!FAMOT_MuscleActivationToolbox_Mani_IITD.slnx
