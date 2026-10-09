@@ -150,8 +150,6 @@ namespace FAMOT.Recording
                     controller.Marker += OnMarker;
                     controller.TrialChanged += OnTrial;
                     controller.TargetChanged += OnTarget;
-                    controller.StatusChanged += OnStatus;
-                    controller.PhaseChanged += OnPhase;
                     if (controller.liveArm != null) controller.liveArm.Calibrated += OnCalibrated;
                     if (controller.otherArm != null) controller.otherArm.Calibrated += OnCalibrated;
                 }
@@ -160,8 +158,6 @@ namespace FAMOT.Recording
                     controller.Marker -= OnMarker;
                     controller.TrialChanged -= OnTrial;
                     controller.TargetChanged -= OnTarget;
-                    controller.StatusChanged -= OnStatus;
-                    controller.PhaseChanged -= OnPhase;
                     if (controller.liveArm != null) controller.liveArm.Calibrated -= OnCalibrated;
                     if (controller.otherArm != null) controller.otherArm.Calibrated -= OnCalibrated;
                 }
@@ -181,8 +177,6 @@ namespace FAMOT.Recording
         private void OnMarker(string category, string name, double value, string detail) => events?.Log(category, name, value, detail);
         private void OnTrial(int t) => events?.Log("trial", "trial", t, string.Empty);
         private void OnTarget(int t) => events?.Log("target", "target", t, controller != null ? controller.TargetAngles.ToString() : string.Empty);
-        private void OnStatus(TargetStatus s) => events?.Log("status", s.ToString(), double.NaN, string.Empty);
-        private void OnPhase(ExperimentPhase p) => events?.Log("phase", p.ToString(), double.NaN, string.Empty);
         private void OnRawIn(string text, IPEndPoint ep) => rawUdp?.Log(RawUdpLogger.In, ep != null ? ep.ToString() : string.Empty, text);
         private void OnRawOut(string text)
         {

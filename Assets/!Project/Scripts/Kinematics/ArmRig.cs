@@ -105,8 +105,8 @@ namespace FAMOT.Kinematics
         }
 
         /// <summary>
-        /// Finds a negatively scaled ancestor between the hand bone and the anchor. The rendered bones are then
-        /// reflections of their quaternion rotations across that ancestor's mirrored axis.
+        /// Detects a negatively scaled ancestor between the hand bone and the anchor (mirrored model, e.g. the
+        /// left arm prefab). Informational only: world-space rotation deltas behave correctly either way.
         /// </summary>
         private void DetectMirror()
         {
@@ -131,24 +131,6 @@ namespace FAMOT.Kinematics
                 mirrorTransform = Anchor;
                 mirrorLocalAxis = Vector3.right;
             }
-        }
-
-        private Vector3 MirrorNormalWorld => (mirrorTransform != null ? mirrorTransform.rotation : Anchor.rotation) * mirrorLocalAxis;
-
-        /// <summary>Converts a desired proper world rotation into the quaternion to assign to a mirrored bone.</summary>
-        private Quaternion ToAssignable(Quaternion desiredWorld, Quaternion restWorldQuat)
-        {
-            if (!isMirrored) return desiredWorld;
-            Quaternion delta = desiredWorld * Quaternion.Inverse(restWorldQuat);
-            return AnatomicalMath.MirrorConjugate(delta, MirrorNormalWorld) * restWorldQuat;
-        }
-
-        /// <summary>Inverse of <see cref="ToAssignable"/>: reads a mirrored bone's quaternion back as a proper world rotation.</summary>
-        private Quaternion FromAssigned(Quaternion assignedWorld, Quaternion restWorldQuat)
-        {
-            if (!isMirrored) return assignedWorld;
-            Quaternion delta = assignedWorld * Quaternion.Inverse(restWorldQuat);
-            return AnatomicalMath.MirrorConjugate(delta, MirrorNormalWorld) * restWorldQuat;
         }
 
         private Transform FindBone(string[] names)
@@ -271,21 +253,13 @@ namespace FAMOT.Kinematics
         public void ApplyPose(in ArmPoseResult pose)
         {
             if (!IsBound) return;
-            if (!isMirrored)
-            {
-                upperArmBone.rotation = pose.upperArmRot;
-                if (upperArmTwistBone != null) upperArmTwistBone.rotation = pose.upperArmTwistRot;
-                forearmBone.rotation = pose.forearmRot;
-                if (forearmTwistBone != null) forearmTwistBone.rotation = pose.forearmTwistRot;
-                handBone.rotation = pose.handRot;
-                return;
-            }
-            ArmRestPose rest = BuildWorldRest();
-            upperArmBone.rotation = ToAssignable(pose.upperArmRot, rest.upperArmRot);
-            if (upperArmTwistBone != null) upperArmTwistBone.rotation = ToAssignable(pose.upperArmTwistRot, rest.upperArmTwistRot);
-            forearmBone.rotation = ToAssignable(pose.forearmRot, rest.forearmRot);
-            if (forearmTwistBone != null) forearmTwistBone.rotation = ToAssignable(pose.forearmTwistRot, rest.forearmTwistRot);
-            handBone.rotation = ToAssignable(pose.handRot, rest.handRot);
+            // World-space deltas apply correctly even under a mirrored (negative-scale) parent: Unity's rotation
+            // setter keeps delta * rotation consistent with the rendered bone, so no conjugation is needed.
+            upperArmBone.rotation = pose.upperArmRot;
+            if (upperArmTwistBone != null) upperArmTwistBone.rotation = pose.upperArmTwistRot;
+            forearmBone.rotation = pose.forearmRot;
+            if (forearmTwistBone != null) forearmTwistBone.rotation = pose.forearmTwistRot;
+            handBone.rotation = pose.handRot;
         }
 
         /// <summary>Returns the arm to its rest pose.</summary>
@@ -299,11 +273,7 @@ namespace FAMOT.Kinematics
         public UpperLimbAngles DecomposeCurrentBones()
         {
             if (!hasRest) return UpperLimbAngles.Zero;
-            ArmRestPose rest = BuildWorldRest();
-            return ArmSolver.Decompose(rest,
-                FromAssigned(upperArmBone.rotation, rest.upperArmRot),
-                FromAssigned(forearmBone.rotation, rest.forearmRot),
-                FromAssigned(handBone.rotation, rest.handRot));
+            return ArmSolver.Decompose(BuildWorldRest(), upperArmBone.rotation, forearmBone.rotation, handBone.rotation);
         }
 
         /// <summary>World positions of shoulder, elbow, wrist as currently posed by the bones.</summary>

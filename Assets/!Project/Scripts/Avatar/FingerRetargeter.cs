@@ -190,21 +190,12 @@ namespace FAMOT.Avatar
             bool[] valid = t.GetJointValidity(side);
             // 'conv' maps our joint-like frame (forward = along bone, up = dorsal) onto the provider's joint axes.
             Quaternion conv = Quaternion.LookRotation(jointForwardAxis, jointDorsalAxis);
-            bool isMirrored = rig.IsMirrored;
-            Vector3 mirrorNormal = isMirrored ? rig.Anchor.right : Vector3.right;
-
             foreach (BoneBinding b in bindings)
             {
                 int idx = b.joint.ToIndex();
                 if (idx < 0 || idx >= valid.Length || !valid[idx]) continue;
                 Quaternion jointRot = joints[idx].rotation * Quaternion.Inverse(conv);
-                Quaternion desired = jointRot * b.offset;
-                if (isMirrored)
-                {
-                    Quaternion delta = desired * Quaternion.Inverse(b.bone.rotation);
-                    desired = AnatomicalMath.MirrorConjugate(delta, mirrorNormal) * b.bone.rotation;
-                }
-                b.bone.rotation = desired;
+                b.bone.rotation = jointRot * b.offset;
             }
             IsRetargetingThisFrame = true;
         }

@@ -236,8 +236,8 @@ namespace FAMOT.Experiment
             bool newTarget = !hasLegacyTarget || UpperLimbAngles.MaxAbsDifference(target, lastLegacyTarget) > 0.01f;
             lastLegacyTarget = target;
             hasLegacyTarget = true;
-            if (newTarget) AdvanceTargetCounter();
             SetTarget(target, LegacyDofMask);
+            if (newTarget) AdvanceTargetCounter();
             if (liveArm != null && liveArm.requestedSource == ArmInputSource.ExternalAngles) liveArm.SetExternalAngles(input);
             ApplySenderStatus(m.status);
         }
@@ -246,8 +246,8 @@ namespace FAMOT.Experiment
         {
             EnterTest();
             bool newTarget = !HasTarget || UpperLimbAngles.MaxAbsDifference(m.targetAngles, TargetAngles) > 0.01f;
-            if (newTarget) AdvanceTargetCounter();
             SetTarget(m.targetAngles, AllDofMask);
+            if (newTarget) AdvanceTargetCounter();
             if (liveArm != null && liveArm.requestedSource == ArmInputSource.ExternalAngles) liveArm.SetExternalAngles(m.inputAngles);
             ApplySenderStatus(m.status);
         }
