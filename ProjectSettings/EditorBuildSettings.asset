@@ -15,9 +15,8 @@ EditorBuildSettings:
     path: Assets/!Project/Scenes/Scene1R.unity
     guid: b8f8c1beb8c4c834d83ab04ea8cf7725
   - enabled: 1
-    path: Assets/!Project/Scenes/Scene1R_VR.unity
+    path: Assets/!Project/Scenes/Scene1_VR.unity
     guid: 850b530570a6da04790fd2a6da92c7b1
   m_configObjects:
     com.unity.xr.management.loader_settings: {fileID: 11400000, guid: fa2aa57b1d8c7c94a87bf0a794d598c0, type: 2}
     com.unity.xr.openxr.settings4: {fileID: 11400000, guid: 8f540971ed9678f4e8ceb8cc275c2acc, type: 2}
-  m_UseUCBPForAssetBundles: 0

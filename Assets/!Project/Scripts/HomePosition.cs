@@ -22,7 +22,12 @@ public class HomePosition : MonoBehaviour
 
     public void ReturnToLogin()
     {
-        // Load the Login scene
+        // Close the data session cleanly, then load the Login scene
+        if (FAMOT.Session.SessionManager.Instance != null)
+        {
+            FAMOT.Session.SessionManager.Instance.EndSession();
+        }
+        FAMOT.Session.LaunchConfig.Clear();
         SceneManager.LoadScene("Scene0");
     }
 }
